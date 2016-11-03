@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>类跑马灯效果</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+    }
+    .wrap {
+      margin: 20px 0;
+    }
+    .items {
+      position: relative;
+      width: 1200px;
+      margin: 0 auto;
+      height: 250px;
+    }
+    .item {
+      display: block;
+      width: 200px;
+      height: 250px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: all .3s ease;
+      font-size: 24px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .item-0 {
+      background: #84AF9B;
+    }
+    .item-1 {
+      background:#FF4366;
+    }
+    .item-2 {
+      background: #FC9D9B;
+    }
+    .item-3 {
+      background: #F9CCAD;
+    }
+    .item-4 {
+      background:#C9C8AA;
+    }
+    .alert-text {
+      font-size:60px;
+      display: block;
+      line-height: 250px;
+      text-align: center;
+      width: 80%;
+      border: 1px solid #fff;
+    }
+    .tab-content{
+      width:320px;
+      height:320px;
+      margin:100px auto;
+      border:2px solid #e84c3d;
+    }
+    .tab-content li img{
+      width:100%;
+    }
+    @keyframes alertText {
+      0% {
+        transform: scale(1)
+      }
+      50% {
+        transform: scale(1.5)
+      }
+      100% {
+        transform: scale(1)
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <ul class="items">
+      <li class="item item-0" data-index="0"><span class="alert-text">A</span></li>
+      <li class="item item-1" data-index="1"><span class="alert-text">E</span></li>
+      <li class="item item-2" data-index="2"><span class="alert-text">I</span></li>
+      <li class="item item-3" data-index="3"><span class="alert-text">O</span></li>
+      <li class="item item-4" data-index="4"><span class="alert-text">U</span></li>
+    </ul>
+  </div>
+  <script src="jquery.js"></script>
+  <script>
+    $(function() {
+      var nodes = $('.item');
+      var styles = [
+        {
+          transform: 'scale(0.6)',
+          left: 0
+        },
+        {
+          transform: 'scale(0.8)',
+          left: '250px'
+        },
+        {
+          transform: 'scale(1)',
+          left: '500px'
+        },
+        {
+          transform: 'scale(0.8)',
+          left: '750px'
+        },
+        {
+          transform: 'scale(0.6)',
+          left: '1000px'
+        }
+      ];
+
+      function attach() {
+        nodes.each(function(i) {
+          $(this).css({
+            transform: styles[i].transform,
+            left: styles[i].left
+          });
+          $(this).attr('data-index', i);
+        });
+        nodes.find('.alert-text').css('animation', '');
+        $(nodes[2]).find('.alert-text').css({
+          animation: 'alertText 1.8s ease 0.5s'
+        });
+        var dataIndex = $(nodes[2]).attr('class').match(/item\-(\d){1}/)[1];
+        $('.tab-item').hide().eq(dataIndex).show();
+      }
+
+      attach();
+
+
+      $('.item').on('click', function() {
+        var index = +$(this).attr('data-index');
+        var delta = index - 2;
+        if(index === 2) {
+          return true;
+        }
+
+        if(delta > 0) {
+          (function() {
+            for(var i = 0; i < delta; i++) {
+              var firstItem = nodes[0];
+              nodes.push(firstItem);
+              [].shift.call(nodes);
+            }
+            attach();
+          }());
+        } else {
+          (function() {
+            delta = Math.abs(delta);
+            for(var i = 0; i < delta; i++) {
+              var lastItem = nodes[nodes.length - 1];
+              [].unshift.call(nodes, lastItem);
+              [].pop.call(nodes);
+            }
+            attach();
+          }());
+        }
+      });
+    });
+  </script>
+</body>
+</html>
